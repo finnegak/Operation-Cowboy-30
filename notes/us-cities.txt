@@ -1,0 +1,15 @@
+    <!-- Cities (you’ll want to place these matching positions on the real map) -->
+   <circle id="nyc" class="city" cx="300" cy="220" r="8" />
+   <text x="315" y="215" font-size="14" fill="#333">NYC</text>
+
+   <circle id="la" class="city" cx="150" cy="450" r="8" />
+   <text x="165" y="445" font-size="14" fill="#333">LA</text>
+
+   <circle id="chi" class="city" cx="550" cy="200" r="8" />
+   <text x="565" y="195" font-size="14" fill="#333">Chicago</text>
+
+   <!-- The flight path (invisible by default) -->
+   <path id="route" d="" fill="none" stroke="red" stroke-width="2" stroke-dasharray="5,5" />
+
+   <!-- Plane icon: we’ll animate this -->
+   <text id="plane" x="0" y="0" font-size="24">✈️</text>
