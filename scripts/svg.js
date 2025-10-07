@@ -1,7 +1,7 @@
 insertUS_SVG();
 
 function insertUS_SVG() {
-    fetch("images/svg/us.svg")
+    fetch("../images/svg/us.svg")
     .then(res => res.text())
     .then(svgContent => {
         document.getElementById("map-container").innerHTML = svgContent;
