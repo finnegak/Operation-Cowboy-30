@@ -1,33 +1,33 @@
-    body {
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      background: #fafafa;
-    }
-    svg {
-      width: 900px;
-      height: auto;
-      border: 1px solid #ccc;
-    }
-    .city {
-      fill: #d32f2f;
-      stroke: white;
-      stroke-width: 1.5;
-      cursor: pointer;
-      transition: fill 0.2s;
-    }
-    .city:hover {
-      fill: #e64a19;
-    }
-    #plane {
-      /* We'll animate this via offset-path */
-      offset-rotate: auto;
-      animation: none;
-    }
-    @keyframes fly {
-      from { offset-distance: 0%; }
-      to   { offset-distance: 100%; }
-    }
-    .flying {
-      animation: fly 3s linear forwards;
-    }
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  background: #fafafa;
+}
+svg {
+  width: 900px;
+  height: auto;
+  border: 1px solid #ccc;
+}
+.city {
+  fill: #d32f2f;
+  stroke: white;
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: fill 0.2s;
+}
+.city:hover {
+  fill: #e64a19;
+}
+#plane {
+  /* We'll animate this via offset-path */
+  offset-rotate: auto;
+  animation: none;
+}
+@keyframes fly {
+  from { offset-distance: 0%; }
+  to   { offset-distance: 100%; }
+}
+.flying {
+  animation: fly 3s linear forwards;
+}
