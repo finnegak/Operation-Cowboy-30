@@ -1,13 +1,14 @@
 body {
   margin: 0;
-  display: flex;
-  justify-content: center;
-  background: #fafafa;
+  margin: 0px auto;
 }
 svg {
-  width: 900px;
+  width: 1100px;
   height: auto;
-  border: 1px solid #ccc;
+}
+#map-container {
+  text-align: center;
+  margin-top: 20px;
 }
 .city {
   fill: #d32f2f;
@@ -35,8 +36,9 @@ svg {
 
 /* hover effect for cities */
 .regular {
-  fill: white;
+  fill: var(--off-white);
 }
 .regular:hover {
   fill: #ccc;
 }
+

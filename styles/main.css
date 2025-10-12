@@ -1,0 +1,19 @@
+:root {
+  --brown: #424A45;
+  --green-blue: #34464D;
+  --mint: #98ABA1;
+  --beige: #CFC5B0;
+  --tan: #CDAF9C;
+  --off-white: #FFFAF0;
+}
+
+body{
+    background-color: var(--beige);
+}
+
+header {
+  text-align: center;
+  padding: 20px;
+  background-color: var(--green-blue);
+  color: var(--off-white);
+}
