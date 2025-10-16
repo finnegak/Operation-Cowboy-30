@@ -9,11 +9,36 @@
 
 body{
     background-color: var(--beige);
+    margin: 0px;
+    margin: 0px auto;
 }
 
 header {
   text-align: center;
-  padding: 20px;
   background-color: var(--green-blue);
   color: var(--off-white);
+  padding: 10px;
+}
+
+img{
+    border-radius: 8px;
+}
+
+/* Fun Go/Play button using CSS variables */
+.fun-btn {
+  background: linear-gradient(90deg, var(--tan), var(--mint));
+  color: var(---off-white);
+  font-size: 1.2rem;
+  padding: 0.4em 1.2em;
+  border: none;
+  border-radius: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  cursor: pointer;
+  transition: transform 0.18s, box-shadow 0.18s;
+  font-family: 'Comic Sans MS', 'Comic Sans', cursive;
+}
+.fun-btn:hover {
+  transform: scale(1.06) rotate(-2deg);
+  box-shadow: 0 4px 16px rgba(205,175,156,0.18);
+  background: linear-gradient(90deg, var(--mint), var(--mint));
 }

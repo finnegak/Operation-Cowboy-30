@@ -68,9 +68,9 @@ function insertUS_SVG() {
 
         // Define the SVG path strings between city pairs
         const routes = {
-        nyc_la: "M300,220 C200,300 120,400 150,450",
-        la_chi: "M150,450 C300,350 500,300 550,200",
-        chi_nyc: "M550,200 C480,120 350,150 300,220"
+            nyc_la: "M300,220 C200,300 120,400 150,450",
+            la_chi: "M150,450 C300,350 500,300 550,200",
+            chi_nyc: "M550,200 C480,120 350,150 300,220"
         };
 
         function flyAlong(pathStr) {
@@ -84,7 +84,7 @@ function insertUS_SVG() {
         plane.classList.remove("flying");
         // Force reflow to restart animation
         void plane.offsetWidth;
-        plane.classList.add("flying");
+            plane.classList.add("flying");
         }
 
         // Event listeners
