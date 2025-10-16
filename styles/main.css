@@ -24,7 +24,7 @@ img{
     border-radius: 8px;
 }
 
-/* Fun Go/Play button using CSS variables */
+/* Fun Go/Play button using CSS variables */ hey
 .fun-btn {
   background: linear-gradient(90deg, var(--tan), var(--mint));
   color: var(---off-white);
