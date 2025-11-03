@@ -1,109 +1,120 @@
-var questionNum;
-var questions = {
-    "Select the state you think you are heading too?": "WY",
-    "How many layovers to get to your destination?": 1,
+// Global variables
+let questionNum = Number(sessionStorage.getItem('questionNum')) || 0;
+let plane; // globally accessible plane element
+
+const questions = {
+    "Your mission begins before sunrise in Charlotte, North Carolina. But this first flight won't take you all the way to your final destination — just to your first stop on the trail. Where will your layover take you?": "TX",
+    "You’re flying over a land of red rocks, slick canyons, and famous parks like Zion and Arches. But this isn’t quite cowboy country just yet…Which state are you crossing?": "UT",
     "Select the state where the layover is with the airport code of DFW": "TX",
     "Select the region of the US where your destination is located": "West"
-}
+};
 
+// Helper
 function getID(id) { return document.getElementById(id); }
 
+// Start quiz
 firstQuestion();
 
 function firstQuestion() {
-    questionNum = 0;
-    getID('question').innerText = Object.keys(questions)[0];
-
+    getID('question').innerText = Object.keys(questions)[questionNum];
     insertUS_SVG();
-
 }
 
+// Handle state clicks
+function handleStateClick(event) {
+    const clickedPath = event.target;
+    const stateId = clickedPath.id;
+
+    if (questionNum === 0) {
+        const correctAnswer = questions[Object.keys(questions)[questionNum]];
+
+        if (stateId === correctAnswer) {
+            alert("That's right, partner — you’ll touch down in Dallas for a quick pit stop before heading deeper into cowboy country.");
+
+            questionNum++;
+            sessionStorage.setItem('questionNum', questionNum);
+            getID('question').innerText = Object.keys(questions)[questionNum];
+
+            // Move plane to TX
+            const newX = 600;
+            const newY = 400;
+            plane.setAttribute("x", newX);
+            plane.setAttribute("y", newY);
+            plane.setAttribute("transform", `rotate(250 ${newX} ${newY})`);
+            sessionStorage.setItem("planeX", newX);
+            sessionStorage.setItem("planeY", newY);
+
+        } else {
+            window.location.href = "wrong.html";
+        }
+    } else if (questionNum === 1) {
+        const correctAnswer = questions[Object.keys(questions)[questionNum]];
+        
+        if (stateId === correctAnswer) {
+            alert("You've got sharp eyes, agent — that's Utah down below. Keep heading north toward wilder lands…");
+            questionNum++;
+            sessionStorage.setItem('questionNum', questionNum);
+            getID('question').innerText = Object.keys(questions)[questionNum];
+            const path = document.getElementById("UT");
+            path.classList.add("correct");
+        } else {
+            window.location.href = "wrong.html";
+        }
+    }
+}
+
+// Insert SVG and plane
 function insertUS_SVG() {
     fetch("../images/svg/us.svg")
-    .then(res => res.text())
-    .then(svgContent => {
-        document.getElementById("map-container").innerHTML = svgContent;
+        .then(res => res.text())
+        .then(svgContent => {
+            document.getElementById("map-container").innerHTML = svgContent;
+            const svg = document.querySelector("#map-container svg");
 
-        // Once inserted, you can query the SVG just like inline elements
-        const svg = document.querySelector("#map-container svg");
+            // Create plane if it doesn't exist
+            plane = document.createElementNS("http://www.w3.org/2000/svg","text");
+            plane.setAttribute("id","plane");
+            plane.setAttribute("font-size","24");
+            plane.textContent = "✈️";
+            plane.setAttribute("text-anchor", "middle");
+            plane.setAttribute("alignment-baseline", "middle");
 
-        // plane emoji
-        const plane = document.createElementNS("http://www.w3.org/2000/svg","text");
-        plane.setAttribute("id","plane");
-        plane.setAttribute("font-size","24");
-        plane.textContent = "✈️";
-        svg.appendChild(plane);
+            // Restore plane position from sessionStorage or default
+            const planeX = Number(sessionStorage.getItem("planeX")) || 850;
+            const planeY = Number(sessionStorage.getItem("planeY")) || 315;
+            plane.setAttribute("x", planeX);
+            plane.setAttribute("y", planeY);
+            plane.setAttribute("transform", `rotate(220 ${planeX} ${planeY})`);
 
-        // route path
-        const route = document.createElementNS("http://www.w3.org/2000/svg","path");
-        route.setAttribute("id","route");
-        route.setAttribute("stroke","red");
-        route.setAttribute("fill","none");
-        svg.appendChild(route);
+            svg.appendChild(plane);
 
-        // cities
-        const cities = [
-        { id: "nyc", name: "NYC", cx: 300, cy: 220, labelX: 315, labelY: 215 },
-        { id: "la", name: "LA", cx: 150, cy: 450, labelX: 165, labelY: 445 },
-        { id: "chi", name: "Chicago", cx: 550, cy: 200, labelX: 565, labelY: 195 }
-        ];
-
-        cities.forEach(city => {
-        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        circle.setAttribute("id", city.id);
-        circle.setAttribute("class", "city");
-        circle.setAttribute("cx", city.cx);
-        circle.setAttribute("cy", city.cy);
-        circle.setAttribute("r", 8);
-        svg.appendChild(circle);
-
-        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        label.setAttribute("x", city.labelX);
-        label.setAttribute("y", city.labelY);
-        label.setAttribute("font-size", "14");
-        label.setAttribute("fill", "#333");
-        label.textContent = city.name;
-        svg.appendChild(label);
-        });
-
-        // Define the SVG path strings between city pairs
-        const routes = {
-            nyc_la: "M300,220 C200,300 120,400 150,450",
-            la_chi: "M150,450 C300,350 500,300 550,200",
-            chi_nyc: "M550,200 C480,120 350,150 300,220"
-        };
-
-        function flyAlong(pathStr) {
-        // Set the route path
-        route.setAttribute("d", pathStr);
-
-        // Apply offset-path to the plane
-        plane.style.offsetPath = `path("${pathStr}")`;
-
-        // Trigger the animation
-        plane.classList.remove("flying");
-        // Force reflow to restart animation
-        void plane.offsetWidth;
-            plane.classList.add("flying");
-        }
-
-        // Event listeners
-        document.getElementById("nyc").addEventListener("click", () => {
-            flyAlong(routes.nyc_la);
-        });
-        document.getElementById("la").addEventListener("click", () => {
-            flyAlong(routes.la_chi);
-        });
-        document.getElementById("chi").addEventListener("click", () => {
-            flyAlong(routes.chi_nyc);
-        });
-
-        // insert onclick listeners for states
-        document.querySelectorAll('.regular').forEach(function(path) {
-            path.addEventListener('click', function() {
-                // Your code here, e.g.:
-                handleStateClick
+            // Add click listeners for states
+            document.querySelectorAll('.regular').forEach(path => {
+                path.addEventListener('click', handleStateClick);
             });
         });
-    });
+}
+
+function resetQuiz() {
+    // Reset question number
+    questionNum = 0;
+    sessionStorage.setItem('questionNum', questionNum);
+
+    // Reset plane location to Charlotte
+    const charlotteX = 850; // default Charlotte X
+    const charlotteY = 315; // default Charlotte Y
+    sessionStorage.setItem('planeX', charlotteX);
+    sessionStorage.setItem('planeY', charlotteY);
+
+    // Update question text
+    getID('question').innerText = Object.keys(questions)[questionNum];
+
+    // Update plane position if it exists on the map
+    if (plane) {
+        plane.setAttribute("x", charlotteX);
+        plane.setAttribute("y", charlotteY);
+        plane.setAttribute("transform", `rotate(220 ${charlotteX} ${charlotteY})`);
+    }
+
+    alert("Quiz has been reset!");
 }

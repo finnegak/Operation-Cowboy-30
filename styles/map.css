@@ -42,3 +42,9 @@ svg {
   fill: #ccc;
 }
 
+.correct {
+  fill: green !important;   /* !important ensures it overrides .regular */
+  stroke: darkgreen;
+  stroke-width: 2;
+}
+
