@@ -1,6 +1,7 @@
 insertUS_SVG();
 
 function insertUS_SVG() {
+    alert();
     fetch("../images/svg/us.svg")
     .then(res => res.text())
     .then(svgContent => {
@@ -68,6 +69,9 @@ function insertUS_SVG() {
         void plane.offsetWidth;
         plane.classList.add("flying");
         }
+        alert();
+        insertMountainEmojis(svg);
+        console.log("SVG viewBox:", svg.getAttribute("viewBox"));
 
         // Event listeners
         document.getElementById("nyc").addEventListener("click", () => {
@@ -81,3 +85,36 @@ function insertUS_SVG() {
         });
     });
 }
+
+
+function insertMountainEmojis(svg) {
+    alert();
+    const mountains = [
+        { id: "rockies", emoji: "🏔️", x: 270, y: 270, label: "The Rockies" },       // central-west
+        { id: "tetons", emoji: "🗻", x: 320, y: 220, label: "The Tetons" },          // northwest of WY
+        { id: "appalachians", emoji: "🌄", x: 750, y: 320, label: "The Appalachians" } // eastern U.S.
+    ];
+
+    mountains.forEach(m => {
+        const mountain = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        mountain.setAttribute("id", m.id);
+        mountain.setAttribute("x", m.x);
+        mountain.setAttribute("y", m.y);
+        mountain.setAttribute("font-size", "28");
+        mountain.setAttribute("cursor", "pointer");
+        mountain.textContent = m.emoji;
+
+        // Add tooltip label (hover text)
+        const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        title.textContent = m.label;
+        mountain.appendChild(title);
+
+        // Add click behavior
+        mountain.addEventListener("click", () => {
+            alert(`You clicked on ${m.label}!`);
+        });
+
+        svg.appendChild(mountain);
+    });
+}
+
