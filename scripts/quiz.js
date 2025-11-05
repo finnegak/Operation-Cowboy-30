@@ -2,7 +2,7 @@ let questionNum = Number(sessionStorage.getItem('questionNum')) || 0;
 let plane;
 
 const questions = {
-    "Your mission begins before sunrise in Charlotte, North Carolina. But this first flight won't take you all the way to your final destination — just to your first stop on the trail. Where will your layover take you?": "TX",
+    "Your mission begins before sunrise in Charlotte, North Carolina. But this first flight won't take you all the way to your final destination — just to your first stop on the trail. Select the state where you layover will take you?": "TX",
     "You're flying over a land of red rocks, slick canyons, and famous parks like Zion and Arches. But this isn't quite cowboy country just yet…Which state are you crossing?": "UT",
     "As you cross the high plains, you spot roaming bison and snow-capped peaks on the horizon. This state's capital is Cheyenne.": "WY",
     "Your intel shows another rugged state just north of where you're headed — known for Glacier National Park and the nickname Big Sky Country.": "MT"
@@ -51,7 +51,7 @@ function handleStateClick(event) {
         const correctAnswer = questions[Object.keys(questions)[questionNum]];
 
         if (stateId === correctAnswer) {
-            alert("That's right, partner — you’ll touch down in Dallas for a quick pit stop before heading deeper into cowboy country.");
+            alert("That's right, partner — you'll touch down in Dallas, Texas for a quick pit stop before heading deeper into cowboy country.");
 
             questionNum++;
             sessionStorage.setItem('questionNum', questionNum);
@@ -115,6 +115,8 @@ function handleStateClick(event) {
             const endViewBox = { x: 200, y: 25, width: 300, height: 300 };
 
             animateZoom(svg, startViewBox, endViewBox, 2000); // 2 second zoom
+            updateStatesForZoomedView(["WY", "MT", "UT"]);
+
 
         } else {
             window.location.href = "wrong.html";
@@ -291,6 +293,22 @@ function addStateTooltips() {
         }
     });
 }
+
+function updateStatesForZoomedView(statesToHighlight) {
+    // Remove 'regular' class from all states
+    document.querySelectorAll('#map-container svg path.regular').forEach(state => {
+        state.classList.remove('regular-hover');
+    });
+
+    // Add 'zoomed-in-state' class only to selected states
+    statesToHighlight.forEach(stateId => {
+        const state = document.getElementById(stateId);
+        if (state) {
+            state.classList.add('zoomed-in-state');
+        }
+    });
+}
+
 
 
 

@@ -20,6 +20,12 @@ header {
   padding: 10px;
 }
 
+header p{
+  width: 65%;
+  margin: 10px auto;
+  font-size: 13pt;
+}
+
 img{
     border-radius: 8px;
 }
@@ -36,6 +42,7 @@ img{
   cursor: pointer;
   transition: transform 0.18s, box-shadow 0.18s;
   font-family: 'Comic Sans MS', 'Comic Sans', cursive;
+  margin: 5px;
 }
 .fun-btn:hover {
   transform: scale(1.06) rotate(-2deg);

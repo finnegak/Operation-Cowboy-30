@@ -33,19 +33,21 @@ svg {
   animation: fly 3s linear forwards;
 }
 
-
 /* hover effect for cities */
 .regular {
   fill: var(--off-white);
 }
-.regular:hover {
+.regular-hover:hover {
   fill: #ccc;
 }
 
 .correct {
-  fill: var(--mint) !important;   /* !important ensures it overrides .regular */
-  stroke: darkgreen;
-  stroke-width: 2;
+  fill: var(--mint);
+}
+
+.zoomed-in-state:hover {
+  fill: var(--tan);
+  cursor: pointer;   /* optional: show normal cursor */
 }
 
 text {
