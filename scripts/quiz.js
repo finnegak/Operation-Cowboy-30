@@ -6,7 +6,8 @@ const questions = {
     "You're flying over a land of red rocks, slick canyons, and famous parks like Zion and Arches. But this isn't quite cowboy country just yet…Which state are you crossing?": "UT",
     "As you cross the high plains, you spot roaming bison and snow-capped peaks on the horizon. This state's capital is Cheyenne.": "WY",
     "Your intel shows another rugged state just north of where you're headed — known for Glacier National Park and the nickname Big Sky Country.": "MT",
-    "You've traced the trail deep into cowboy country. Towering above your final destination is one of the most famous peaks in the American West. Which mountain range are you closing in on?": "tetons"
+    "You've traced the trail deep into cowboy country. Towering above your final destination is one of the most famous peaks in the American West. Which mountain range are you closing in on?": "tetons",
+    "You’ve followed the trail across the West and into the Tetons region. Select the area where your mission ends — this is your final destination.": "Jackson Hole, WY"
 };
 
 function getID(id) { return document.getElementById(id); }
@@ -43,9 +44,26 @@ function restoreGreenStates() {
     });
 }
 
+function unmarkStates(stateIds) {
+    // Get current green states from sessionStorage
+    let greenStates = JSON.parse(sessionStorage.getItem("greenStates")) || [];
+
+    stateIds.forEach(stateId => {
+        // Remove the 'correct' class from the SVG path
+        const path = document.getElementById(stateId);
+        if (path) path.classList.remove("correct");
+
+        // Remove the state from the greenStates array
+        greenStates = greenStates.filter(id => id !== stateId);
+    });
+
+    // Save updated array back to sessionStorage
+    sessionStorage.setItem("greenStates", JSON.stringify(greenStates));
+}
+
+
 // Handle state clicks
 function handleStateClick(event) {
-    alert();
     const clickedPath = event.target;
     const stateId = clickedPath.id;
 
@@ -116,13 +134,24 @@ function handleStateClick(event) {
             window.location.href = "wrong.html";
         }
     } else if (questionNum === 4) {
-        alert("Final question!");
         const correctAnswer = questions[Object.keys(questions)[questionNum]];
-        alert(correctAnswer)
-        alert(stateId);
         if (stateId.toLowerCase() === correctAnswer.toLowerCase()) {
-            alert("Mission accomplished, agent! You've successfully navigated the cowboy trail to the Tetons. Time to gear up for the next adventure.");
+            alert("You've successfully navigated the cowboy trail to the Tetons. Time to gear up for the next adventure.");
             questionNum++;
+            sessionStorage.setItem('questionNum', questionNum);
+            getID('question').innerText = Object.keys(questions)[questionNum];
+            zoomToWyoming();
+            showJacksonHoleHotspot();
+            unmarkStates(["UT", "MT"]);
+        } else {
+            window.location.href = "wrong.html";
+        }
+    } else if (questionNum === 5) {
+        const correctAnswer = questions[Object.keys(questions)[questionNum]];
+        if (stateId.toLowerCase() === correctAnswer.toLowerCase()) {
+            alert("Mission accomplished, agent! You've reached your final destination in Jackson Hole, Wyoming. Your mission is complete. Look");
+            questionNum++;
+            sessionStorage.setItem('questionNum', questionNum);
         } else {
             window.location.href = "wrong.html";
         }
@@ -149,9 +178,26 @@ function animateZoom(svg, startViewBox, endViewBox, duration = 2000) {
             requestAnimationFrame(step);
         }
     }
-
     requestAnimationFrame(step);
 }
+
+function zoomToWyoming(duration = 2000) {
+    const svg = document.querySelector("#map-container svg");
+    if (!svg) return;
+    let viewBox = svg.getAttribute("viewBox");
+    let startViewBox;
+    if (viewBox) {
+        const parts = viewBox.split(" ").map(Number);
+        startViewBox = { x: parts[0], y: parts[1], width: parts[2], height: parts[3] };
+    } else {
+        startViewBox = { x: 0, y: 0, width: 1000, height: 600 };
+    }
+    
+    const endViewBox = { x: 325, y: 115, width: 150, height: 150 };
+
+    animateZoom(svg, startViewBox, endViewBox, duration);
+}
+
 
 
 // Insert SVG and plane
@@ -227,8 +273,6 @@ function resetQuiz() {
     if (svg) {
         svg.setAttribute("viewBox", "0 0 1000 600"); // adjust to your full map dimensions
     }
-
-    alert("Quiz has been reset!");
 }
 
 function insertMapEmojis(svg) {
@@ -268,19 +312,44 @@ function insertMapEmojis(svg) {
         point.setAttribute("class", "emoji"); // 👈 Added class here
         point.textContent = m.emoji;
 
-        // Tooltip (hover label)
         const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
         title.textContent = m.label;
         point.appendChild(title);
 
-        // Click event
-        point.addEventListener("click", () => {
-            handleStateClick();
-        });
-
         svg.appendChild(point);
     });
+
+    document.querySelectorAll('.regular, .emoji').forEach(el => {
+        el.addEventListener('click', handleStateClick);
+    });
+
 }
+
+function showJacksonHoleHotspot() {
+    const svg = document.querySelector("#map-container svg");
+    if (!svg) return;
+
+    // Create invisible Jackson Hole hotspot
+    const jacksonHole = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    jacksonHole.setAttribute("id", "jacksonhole");
+    jacksonHole.setAttribute("cx", 375);
+    jacksonHole.setAttribute("cy", 175);
+    jacksonHole.setAttribute("r", 15);
+    jacksonHole.setAttribute("fill", "transparent");
+    jacksonHole.setAttribute("cursor", "pointer");
+
+    jacksonHole.addEventListener("click", () => {
+        if (questionNum === 5) {
+            alert("You’ve selected the final destination!");
+            questionNum++;
+            sessionStorage.setItem('questionNum', questionNum);
+            getID('question').innerText = "Mission accomplished! You've reached your final destination.";
+        }
+    });
+
+    svg.appendChild(jacksonHole);
+}
+
 
 // Add tooltips to all states dynamically
 function addStateTooltips() {
