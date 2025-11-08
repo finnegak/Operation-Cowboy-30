@@ -5,7 +5,8 @@ const questions = {
     "Your mission begins before sunrise in Charlotte, North Carolina. But this first flight won't take you all the way to your final destination — just to your first stop on the trail. Select the state where you layover will take you?": "TX",
     "You're flying over a land of red rocks, slick canyons, and famous parks like Zion and Arches. But this isn't quite cowboy country just yet…Which state are you crossing?": "UT",
     "As you cross the high plains, you spot roaming bison and snow-capped peaks on the horizon. This state's capital is Cheyenne.": "WY",
-    "Your intel shows another rugged state just north of where you're headed — known for Glacier National Park and the nickname Big Sky Country.": "MT"
+    "Your intel shows another rugged state just north of where you're headed — known for Glacier National Park and the nickname Big Sky Country.": "MT",
+    "You've traced the trail deep into cowboy country. Towering above your final destination is one of the most famous peaks in the American West. Which mountain range are you closing in on?": "tetons"
 };
 
 function getID(id) { return document.getElementById(id); }
@@ -44,6 +45,7 @@ function restoreGreenStates() {
 
 // Handle state clicks
 function handleStateClick(event) {
+    alert();
     const clickedPath = event.target;
     const stateId = clickedPath.id;
 
@@ -106,18 +108,21 @@ function handleStateClick(event) {
 
             // zoom into UT, MT, WY area for final reveal
             const svg = document.getElementById("svg");
-            // viewBox format: min-x, min-y, width, height
-            // svg.setAttribute("viewBox", "200 25 300 300"); // tweak values to frame WY, MT, UT
-
-                // Full US viewBox (current) - tweak if needed
             const startViewBox = { x: 0, y: 0, width: 1000, height: 600 };
-            // Zoomed-in viewBox around WY, MT, UT - tweak to fit your map
             const endViewBox = { x: 200, y: 25, width: 300, height: 300 };
-
             animateZoom(svg, startViewBox, endViewBox, 2000); // 2 second zoom
             updateStatesForZoomedView(["WY", "MT", "UT"]);
-
-
+        } else {
+            window.location.href = "wrong.html";
+        }
+    } else if (questionNum === 4) {
+        alert("Final question!");
+        const correctAnswer = questions[Object.keys(questions)[questionNum]];
+        alert(correctAnswer)
+        alert(stateId);
+        if (stateId.toLowerCase() === correctAnswer.toLowerCase()) {
+            alert("Mission accomplished, agent! You've successfully navigated the cowboy trail to the Tetons. Time to gear up for the next adventure.");
+            questionNum++;
         } else {
             window.location.href = "wrong.html";
         }
@@ -270,7 +275,7 @@ function insertMapEmojis(svg) {
 
         // Click event
         point.addEventListener("click", () => {
-            alert(`You clicked on ${m.label}!`);
+            handleStateClick();
         });
 
         svg.appendChild(point);
