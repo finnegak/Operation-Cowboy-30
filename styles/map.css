@@ -47,7 +47,7 @@ svg {
 
 .zoomed-in-state:hover {
   fill: var(--tan);
-  cursor: pointer;   /* optional: show normal cursor */
+  cursor: pointer;
 }
 
 text {
@@ -60,3 +60,11 @@ text {
   transition: transform 0.2s;
 }
 
+.emoji {
+  transition: opacity 1s ease; /* fade over 1 second */
+}
+
+.hidden {
+  opacity: 0; /* fade target */
+  pointer-events: none; /* prevent clicks while hidden */
+}

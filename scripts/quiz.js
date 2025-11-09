@@ -1,91 +1,184 @@
 let questionNum = Number(sessionStorage.getItem('questionNum')) || 0;
 let plane;
-
+let svg;
 const questions = {
     "Your mission begins before sunrise in Charlotte, North Carolina. But this first flight won't take you all the way to your final destination — just to your first stop on the trail. Select the state where you layover will take you?": "TX",
     "You're flying over a land of red rocks, slick canyons, and famous parks like Zion and Arches. But this isn't quite cowboy country just yet…Which state are you crossing?": "UT",
     "As you cross the high plains, you spot roaming bison and snow-capped peaks on the horizon. This state's capital is Cheyenne.": "WY",
     "Your intel shows another rugged state just north of where you're headed — known for Glacier National Park and the nickname Big Sky Country.": "MT",
     "You've traced the trail deep into cowboy country. Towering above your final destination is one of the most famous peaks in the American West. Which mountain range are you closing in on?": "tetons",
-    "You’ve followed the trail across the West and into the Tetons region. Select the area where your mission ends — this is your final destination.": "Jackson Hole, WY"
+    "You've followed the trail across the West and into the Tetons region. Select the area where your mission ends — this is your final destination.": "Jackson Hole, WY"
 };
 
 function getID(id) { return document.getElementById(id); }
 
-firstQuestion();
+main();
 
-function firstQuestion() {
-    getID('question').innerText = Object.keys(questions)[questionNum];
-    insertUS_SVG();
+function main() {
+    console.log("Quiz script loaded.");
+    insertUS_SVG().then(() => {
+        console.log("SVG and plane ready — restoring map state...");
+        restoreMapState();
+    });
 }
 
-function markStateCorrect(stateId) {
-    // Get saved green states from sessionStorage (or empty array)
-    let greenStates = JSON.parse(sessionStorage.getItem("greenStates")) || [];
+function insertUS_SVG() {
+    console.log("Inserting US SVG...");
+    return fetch("../images/svg/us.svg")
+        .then(res => res.text())
+        .then(svgContent => {
+            document.getElementById("map-container").innerHTML = svgContent;
+            svg = document.querySelector("#map-container svg");
 
-    // Add the state if not already in array
-    if (!greenStates.includes(stateId)) {
-        greenStates.push(stateId);
+            addStateTooltips();
+
+            // Create plane
+            plane = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            plane.setAttribute("id", "plane");
+            plane.setAttribute("font-size", "48");
+            plane.textContent = "✈️";
+            plane.setAttribute("text-anchor", "middle");
+            plane.setAttribute("alignment-baseline", "middle");
+            svg.appendChild(plane);
+
+            // Add click listeners for states
+            document.querySelectorAll('.regular').forEach(path => {
+                path.addEventListener('click', handleStateClick);
+            });
+
+            console.log("SVG inserted and plane added.");
+        });
+}
+
+
+function restoreMapState() {
+    console.log("Restoring map state...");
+    questionNum = Number(sessionStorage.getItem("questionNum")) || 0;
+    console.log("Restored questionNum:", questionNum);
+    getID("question").innerText = Object.keys(questions)[questionNum] || "";
+
+    const svg = document.querySelector("#map-container svg");
+
+    // Then adjust based on the current question
+    switch (questionNum) {
+        case 0:
+            // Charlotte position
+            const planeX = 850;
+            const planeY = 315;
+            plane.setAttribute("x", planeX);
+            plane.setAttribute("y", planeY);
+            plane.setAttribute("transform", `rotate(220 ${planeX} ${planeY})`);
+            insertMapEmojis(svg)
+            break;
+
+        case 1:
+            // Texas position
+            questionOne();
+            insertMapEmojis(svg)
+            break;
+
+        case 2:
+            insertMapEmojis(svg)
+            questionTwo();
+            break;
+
+        case 3:
+            insertMapEmojis(svg)
+            questionThree();
+            break;
+
+        case 4:
+            insertMapEmojis(svg)
+            questionFour();
+            break;
+
+        case 5:
+            questionFive();
+            break;
     }
+}
 
-    // Save back to sessionStorage
-    sessionStorage.setItem("greenStates", JSON.stringify(greenStates));
 
-    // Add the 'correct' class to visually highlight
+function markStateCorrect(stateId) {
     const path = document.getElementById(stateId);
     if (path) path.classList.add("correct");
 }
 
-function restoreGreenStates() {
-    const greenStates = JSON.parse(sessionStorage.getItem("greenStates")) || [];
-    greenStates.forEach(stateId => {
-        const path = document.getElementById(stateId);
-        if (path) path.classList.add("correct");
-    });
-}
-
 function unmarkStates(stateIds) {
-    // Get current green states from sessionStorage
-    let greenStates = JSON.parse(sessionStorage.getItem("greenStates")) || [];
-
     stateIds.forEach(stateId => {
         // Remove the 'correct' class from the SVG path
         const path = document.getElementById(stateId);
         if (path) path.classList.remove("correct");
 
-        // Remove the state from the greenStates array
-        greenStates = greenStates.filter(id => id !== stateId);
     });
-
-    // Save updated array back to sessionStorage
-    sessionStorage.setItem("greenStates", JSON.stringify(greenStates));
 }
 
+function nextQuestion() {
+    questionNum++;
+    sessionStorage.setItem('questionNum', questionNum);
+    getID('question').innerText = Object.keys(questions)[questionNum];
+}
 
-// Handle state clicks
+function questionOne() {
+    // Move plane to TX
+    const newX = 600;
+    const newY = 400;
+    plane.setAttribute("x", newX);
+    plane.setAttribute("y", newY);
+    plane.setAttribute("transform", `rotate(250 ${newX} ${newY})`);
+}
+
+function questionTwo() {
+    questionOne(); // Ensure plane is in TX
+    markStateCorrect("UT");
+}
+
+function questionThree() {
+    questionTwo();
+    markStateCorrect("WY");
+}
+
+function questionFour() {
+    console.log("Executing questionFour zoom...");
+    questionThree();
+    markStateCorrect("MT");
+
+    const svg = document.getElementById("svg");
+    if (!svg) return console.error("SVG not found");
+
+    const viewBox = "200 25 300 300"; // x y width height
+    svg.setAttribute("viewBox", viewBox);
+
+
+    updateStatesForZoomedView(["WY", "MT", "UT"]);
+}
+
+function questionFive() {
+    const svg = document.querySelector("#map-container svg");
+    if (!svg) return console.error("SVG not found");
+
+    // 🔹 Instantly set Wyoming viewBox (no animation)
+    const viewBox = "325 115 150 150";
+    svg.setAttribute("viewBox", viewBox);
+
+    showJacksonHoleHotspot();
+    onlyWyoming(["UT", "MT"])
+    unmarkStates(["UT", "MT"]);
+    markStateCorrect("WY");
+    updateStatesForZoomedView(["WY"]);
+    fadeOutEmojis()
+}
+
 function handleStateClick(event) {
     const clickedPath = event.target;
     const stateId = clickedPath.id;
 
     if (questionNum === 0) {
         const correctAnswer = questions[Object.keys(questions)[questionNum]];
-
         if (stateId === correctAnswer) {
             alert("That's right, partner — you'll touch down in Dallas, Texas for a quick pit stop before heading deeper into cowboy country.");
-
-            questionNum++;
-            sessionStorage.setItem('questionNum', questionNum);
-            getID('question').innerText = Object.keys(questions)[questionNum];
-
-            // Move plane to TX
-            const newX = 600;
-            const newY = 400;
-            plane.setAttribute("x", newX);
-            plane.setAttribute("y", newY);
-            plane.setAttribute("transform", `rotate(250 ${newX} ${newY})`);
-            sessionStorage.setItem("planeX", newX);
-            sessionStorage.setItem("planeY", newY);
-
+            nextQuestion(); // Increments questionNum, updates storage, and question text
+            questionOne(); // Moves plane to TX
         } else {
             window.location.href = "wrong.html";
         }
@@ -94,10 +187,8 @@ function handleStateClick(event) {
         
         if (stateId === correctAnswer) {
             alert("You've got sharp eyes, agent — that's Utah down below. Keep heading north toward wilder lands…");
-            questionNum++;
-            sessionStorage.setItem('questionNum', questionNum);
-            getID('question').innerText = Object.keys(questions)[questionNum];
-            markStateCorrect("UT");
+            nextQuestion();
+            questionTwo();
         } else {
             window.location.href = "wrong.html";
         }
@@ -106,11 +197,8 @@ function handleStateClick(event) {
         
         if (stateId === correctAnswer) {
             alert("That's right — you've entered the wild heart of the West: Wyoming. Your final target is close…");
-            questionNum++;
-            sessionStorage.setItem('questionNum', questionNum);
-            getID('question').innerText = Object.keys(questions)[questionNum];
-            markStateCorrect("WY");
-
+            nextQuestion();
+            questionThree();
         } else {
             window.location.href = "wrong.html";
         }
@@ -118,13 +206,9 @@ function handleStateClick(event) {
         const correctAnswer = questions[Object.keys(questions)[questionNum]];
         
         if (stateId === correctAnswer) {
-            alert("You’re good, Cowboy — that's Montana up north. But your mission lies just below those peaks…");
-            questionNum++;
-            sessionStorage.setItem('questionNum', questionNum);
-            getID('question').innerText = Object.keys(questions)[questionNum];
+            alert("You're good, Cowboy — that's Montana up north. But your mission lies just below those peaks…");
+            nextQuestion();
             markStateCorrect("MT");
-
-            // zoom into UT, MT, WY area for final reveal
             const svg = document.getElementById("svg");
             const startViewBox = { x: 0, y: 0, width: 1000, height: 600 };
             const endViewBox = { x: 200, y: 25, width: 300, height: 300 };
@@ -137,18 +221,16 @@ function handleStateClick(event) {
         const correctAnswer = questions[Object.keys(questions)[questionNum]];
         if (stateId.toLowerCase() === correctAnswer.toLowerCase()) {
             alert("You've successfully navigated the cowboy trail to the Tetons. Time to gear up for the next adventure.");
-            questionNum++;
-            sessionStorage.setItem('questionNum', questionNum);
-            getID('question').innerText = Object.keys(questions)[questionNum];
-            zoomToWyoming();
-            showJacksonHoleHotspot();
-            unmarkStates(["UT", "MT"]);
+            nextQuestion();
+            // Zoom into Wyoming
+            zoomToWyoming()
+            questionFive();
         } else {
             window.location.href = "wrong.html";
         }
     } else if (questionNum === 5) {
         const correctAnswer = questions[Object.keys(questions)[questionNum]];
-        if (stateId.toLowerCase() === correctAnswer.toLowerCase()) {
+        if (stateId === correctAnswer) {
             alert("Mission accomplished, agent! You've reached your final destination in Jackson Hole, Wyoming. Your mission is complete. Look");
             questionNum++;
             sessionStorage.setItem('questionNum', questionNum);
@@ -158,7 +240,7 @@ function handleStateClick(event) {
     }
 }
 
-function animateZoom(svg, startViewBox, endViewBox, duration = 2000) {
+function animateZoom(svg, startViewBox, endViewBox, duration = 2000, callback) {
     let startTime = null;
 
     function step(timestamp) {
@@ -166,7 +248,7 @@ function animateZoom(svg, startViewBox, endViewBox, duration = 2000) {
         let progress = (timestamp - startTime) / duration;
         if (progress > 1) progress = 1;
 
-        // Linear interpolation
+        // Linear interpolation for smooth zoom
         let currentX = startViewBox.x + (endViewBox.x - startViewBox.x) * progress;
         let currentY = startViewBox.y + (endViewBox.y - startViewBox.y) * progress;
         let currentWidth = startViewBox.width + (endViewBox.width - startViewBox.width) * progress;
@@ -176,6 +258,9 @@ function animateZoom(svg, startViewBox, endViewBox, duration = 2000) {
 
         if (progress < 1) {
             requestAnimationFrame(step);
+        } else {
+            svg.setAttribute("viewBox", `${endViewBox.x} ${endViewBox.y} ${endViewBox.width} ${endViewBox.height}`);
+            if (callback) callback(); // Optional callback for post-zoom logic
         }
     }
     requestAnimationFrame(step);
@@ -184,6 +269,7 @@ function animateZoom(svg, startViewBox, endViewBox, duration = 2000) {
 function zoomToWyoming(duration = 2000) {
     const svg = document.querySelector("#map-container svg");
     if (!svg) return;
+
     let viewBox = svg.getAttribute("viewBox");
     let startViewBox;
     if (viewBox) {
@@ -192,51 +278,13 @@ function zoomToWyoming(duration = 2000) {
     } else {
         startViewBox = { x: 0, y: 0, width: 1000, height: 600 };
     }
-    
+
     const endViewBox = { x: 325, y: 115, width: 150, height: 150 };
 
-    animateZoom(svg, startViewBox, endViewBox, duration);
-}
-
-
-
-// Insert SVG and plane
-function insertUS_SVG() {
-    fetch("../images/svg/us.svg")
-        .then(res => res.text())
-        .then(svgContent => {
-            document.getElementById("map-container").innerHTML = svgContent;
-            const svg = document.querySelector("#map-container svg");
-
-            // Restore green states
-            restoreGreenStates();
-
-            addStateTooltips();
-
-            // Create plane if it doesn't exist
-            plane = document.createElementNS("http://www.w3.org/2000/svg","text");
-            plane.setAttribute("id","plane");
-            plane.setAttribute("font-size", "48");
-            plane.textContent = "✈️";
-            plane.setAttribute("text-anchor", "middle");
-            plane.setAttribute("alignment-baseline", "middle");
-
-            // Restore plane position from sessionStorage or default
-            const planeX = Number(sessionStorage.getItem("planeX")) || 850;
-            const planeY = Number(sessionStorage.getItem("planeY")) || 315;
-            plane.setAttribute("x", planeX);
-            plane.setAttribute("y", planeY);
-            plane.setAttribute("transform", `rotate(220 ${planeX} ${planeY})`);
-
-            svg.appendChild(plane);
-
-            insertMapEmojis(svg)
-
-            // Add click listeners for states
-            document.querySelectorAll('.regular').forEach(path => {
-                path.addEventListener('click', handleStateClick);
-            });
-        });
+    // ✅ Pass a callback to confirm saving finished before navigation
+    animateZoom(svg, startViewBox, endViewBox, duration, () => {
+        console.log("Zoom to Wyoming complete — map state saved.");
+    });
 }
 
 function resetQuiz() {
@@ -247,10 +295,7 @@ function resetQuiz() {
     // Reset plane location to Charlotte
     const charlotteX = 850;
     const charlotteY = 315;
-    sessionStorage.setItem('planeX', charlotteX);
-    sessionStorage.setItem('planeY', charlotteY);
 
-    // Update question text
     getID('question').innerText = Object.keys(questions)[questionNum];
 
     // Update plane position if it exists on the map
@@ -259,9 +304,6 @@ function resetQuiz() {
         plane.setAttribute("y", charlotteY);
         plane.setAttribute("transform", `rotate(220 ${charlotteX} ${charlotteY})`);
     }
-
-    // Clear green states from sessionStorage
-    sessionStorage.removeItem("greenStates");
 
     // Remove 'correct' class from all states on the map
     document.querySelectorAll('.regular').forEach(path => {
@@ -273,6 +315,9 @@ function resetQuiz() {
     if (svg) {
         svg.setAttribute("viewBox", "0 0 1000 600"); // adjust to your full map dimensions
     }
+    insertMapEmojis(svg);
+    fadeInEmojis()
+    removeJacksonHoleHotspot()
 }
 
 function insertMapEmojis(svg) {
@@ -309,7 +354,7 @@ function insertMapEmojis(svg) {
         point.setAttribute("y", m.y);
         point.setAttribute("font-size", "24");
         point.setAttribute("cursor", "pointer");
-        point.setAttribute("class", "emoji"); // 👈 Added class here
+        point.setAttribute("class", "emoji");
         point.textContent = m.emoji;
 
         const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
@@ -326,6 +371,7 @@ function insertMapEmojis(svg) {
 }
 
 function showJacksonHoleHotspot() {
+    console.log("Showing Jackson Hole hotspot...");
     const svg = document.querySelector("#map-container svg");
     if (!svg) return;
 
@@ -336,6 +382,8 @@ function showJacksonHoleHotspot() {
     jacksonHole.setAttribute("cy", 175);
     jacksonHole.setAttribute("r", 15);
     jacksonHole.setAttribute("fill", "transparent");
+    // jacksonHole.setAttribute("stroke", "transparent");
+    jacksonHole.setAttribute("stroke", "pink");
     jacksonHole.setAttribute("cursor", "pointer");
 
     jacksonHole.addEventListener("click", () => {
@@ -350,13 +398,23 @@ function showJacksonHoleHotspot() {
     svg.appendChild(jacksonHole);
 }
 
+function removeJacksonHoleHotspot() {
+    const jacksonHole = document.getElementById("jacksonhole");
+    if (jacksonHole) {
+        jacksonHole.remove();
+        console.log("Jackson Hole hotspot removed.");
+    } else {
+        console.log("No Jackson Hole hotspot found to remove.");
+    }
+}
+
+
 
 // Add tooltips to all states dynamically
 function addStateTooltips() {
     const states = document.querySelectorAll('#map-container svg path');
 
     states.forEach(state => {
-        // Use data-name if available, otherwise fallback to id
         const name = state.getAttribute('data-name') || state.id;
 
         // Only add title if it doesn't already exist
@@ -382,6 +440,31 @@ function updateStatesForZoomedView(statesToHighlight) {
         }
     });
 }
+
+function fadeOutEmojis() {
+  const emojis = document.querySelectorAll(".emoji");
+  emojis.forEach(emoji => {
+    emoji.classList.add("hidden");
+  });
+}
+
+function fadeInEmojis() {
+  const emojis = document.querySelectorAll(".emoji");
+  emojis.forEach(emoji => {
+    emoji.classList.remove("hidden");
+  });
+}
+
+function onlyWyoming(stateIds) {
+    stateIds.forEach(stateId => {
+        console.log("Removing zoomed-in-state from:", stateId);
+        const path = document.getElementById(stateId);
+        if (path && path.classList.contains("zoomed-in-state")) {
+            path.classList.remove("zoomed-in-state");
+        }
+    });
+}
+
 
 
 
