@@ -385,7 +385,6 @@ function showJacksonHoleHotspot() {
     jacksonHole.setAttribute("r", 15);
     jacksonHole.setAttribute("fill", "transparent");
     // jacksonHole.setAttribute("stroke", "transparent");
-    jacksonHole.setAttribute("stroke", "pink");
     jacksonHole.setAttribute("cursor", "pointer");
 
     jacksonHole.addEventListener("click", () => {
