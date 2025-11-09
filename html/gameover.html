@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Operation Cowboy 30</title>
+  <link rel="stylesheet" href="../styles/main.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(to bottom, #001f3f, #2c3e50);
+      color: #fff;
+      overflow-x: hidden;
+      text-align: center;
+    }
+
+    h1, h2 { margin: 0.5em 0; }
+
+    /* ✈️ Plane animation area */
+    #flight-path {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+      background: linear-gradient(to top, #aee1f9, #e0f7ff);
+      transition: height 2s ease, opacity 2s ease;
+    }
+
+    .plane {
+      position: absolute;
+      top: 45%;
+      left: -120px;
+      font-size: 5em;
+      transform: rotate(0deg);
+      transition: 
+        transform 2s ease-in-out, 
+        left 3s ease-in-out, 
+        top 3s ease-in-out, 
+        opacity 2s ease-in-out;
+    }
+
+    /* ❄️ Snow */
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      color: white;
+      font-size: 1em;
+      opacity: 0.9;
+      pointer-events: none;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(100vh) rotate(360deg); }
+    }
+
+    /* 🎆 Confetti */
+    .confetti {
+      position: fixed;
+      top: 0;
+      width: 10px;
+      height: 10px;
+      background: red;
+      opacity: 0.8;
+      animation: confetti-fall 3s linear infinite;
+    }
+
+    @keyframes confetti-fall {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(100vh) rotate(720deg); }
+    }
+
+    /* 📸 Slideshow */
+    .slideshow-container {
+      max-width: 600px;
+      margin: 30px auto;
+      position: relative;
+    }
+
+    .slide {
+      display: none;
+      border-radius: 12px;
+    }
+
+    .slide img { width: 100%; border-radius: 12px; }
+
+    .active { display: block; }
+
+    .caption { margin-top: 10px; font-style: italic; }
+
+    /* ✈️ Flight info */
+    .flights {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 12px;
+      margin: 30px auto;
+      max-width: 700px;
+    }
+
+    .flight { margin-bottom: 10px; }
+
+    /* 🎉 Smooth Reveal with staggered animation */
+    .reveal {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: opacity 1s ease-out, transform 1s ease-out, visibility 0s linear 1s;
+      /* visibility delayed so it hides instantly but reveals smoothly */
+    }
+
+    .reveal.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      transition-delay: 0s; /* make visible instantly when showing */
+    }
+
+    /* Staggered text fade-ins */
+    .reveal h1, .reveal h2, .reveal p {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: textFadeUp 1.2s ease-out forwards;
+    }
+
+    .reveal.show h1:nth-child(1) { animation-delay: 0.5s; }
+    .reveal.show h2:nth-child(2) { animation-delay: 1.2s; }
+    .reveal.show h2:nth-child(3) { animation-delay: 2s; }
+    .reveal.show h1:nth-child(4) { animation-delay: 2.8s; }
+    .reveal.show p:nth-child(5)  { animation-delay: 3.6s; }
+
+    @keyframes textFadeUp {
+      0% {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Operation Cowboy 30</h1>
+    <p id="question">Mission accomplished! You've reached your final destination.</p>
+    <input type="button" value="Home" class="fun-btn" onclick="location.href='../index.html'">
+    <input type="button" value="Start Over" class="fun-btn" onclick="location.reload()">
+  </header>
+
+  <!-- ✈️ Flight Path -->
+  <div id="flight-path">
+    <div id="plane" class="plane">✈️</div>
+  </div>
+
+  <!-- 🎉 Final Reveal -->
+  <div id="reveal" class="reveal">
+    <h1>🎉 Surprise! Destination Unlocked 🎉</h1>
+    <h2>Congratulations, Agent Hunter!</h2>
+    <h2>Your 30th Birthday Adventure Takes You To...</h2>
+    <h1 style="font-size: 2.5em; color: #ffdf5d;">🌄 Jackson Hole, Wyoming! 🌄</h1>
+    <p>Pack your boots, flannel, and sense of adventure.<br>We’ll toast to 30 under the Tetons.<br><strong>Happy Birthday, babe 💕</strong></p>
+  </div>
+
+  <!-- ✈️ Flight Itinerary -->
+  <div class="flights">
+    <h2>🛫 Mission Itinerary</h2>
+    <div class="flight"><strong>Flight 1:</strong> American Airlines 1653<br>CLT → DFW | Nov 12, 2025 | 5:23AM → 7:28AM</div>
+    <div class="flight"><strong>Flight 2:</strong> American Airlines 1923<br>DFW → JAC | Nov 12, 2025 | 10:15AM → 12:16PM</div>
+    <div class="flight"><strong>Flight 3:</strong> American Airlines 1923<br>JAC → DFW | Nov 16, 2025 | 1:11PM → 4:55PM</div>
+    <div class="flight"><strong>Flight 4:</strong> American Airlines 522<br>DFW → CLT | Nov 16, 2025 | 7:10PM → 10:41PM</div>
+  </div>
+
+  <!-- 🏨 Hotel & Cabin Slideshow -->
+<div class="slideshow-section">
+  <h2>The Cloudveil, Autograph Collection</h2>
+  <div class="slideshow-container" id="cloudveil-slideshow">
+    <div class="slide active"><img src="../images/hotel/Cloudveil.jpg"></div>
+    <div class="slide"><img src="../images/hotel/Cloudveil2.jpg"></div>
+    <div class="slide"><img src="../images/hotel/Cloudveil3.jpg"></div>
+  </div>
+  <div class="caption">112 Center St, Jackson, WY 83001</div>
+</div>
+
+<div class="slideshow-section">
+  <h2>Rustic Inn Creekside</h2>
+  <div class="slideshow-container" id="rustic-slideshow">
+    <div class="slide active"><img src="../images/hotel/rustic.webp" alt="Rustic Inn Creekside Cabin"></div>
+    <div class="slide"><img src="../images/hotel/rustic2.jpeg" alt="Rustic Inn River View"></div>
+    <div class="slide"><img src="../images/hotel/rustic3.webp" alt="Rustic Inn Lobby"></div>
+  </div>
+  <div class="caption">475 N Cache St, Jackson, WY 83001</div>
+</div>
+
+  <script>
+    const plane = document.getElementById("plane");
+    const reveal = document.getElementById("reveal");
+    const flightPath = document.getElementById("flight-path");
+
+    window.onload = () => {
+      // ✈️ Plane flight
+      setTimeout(() => {
+        plane.style.left = "110vw";
+        plane.style.top = "30%";
+      }, 300);
+
+      // ✈️ Start fade & shrink slightly before flight ends
+      setTimeout(() => {
+        plane.style.opacity = 0;
+        plane.style.transform = 'scale(0.1) rotate(0deg)';
+      }, 2800);
+
+      // 🌤 Fade out flight path
+      setTimeout(() => {
+        flightPath.style.height = '0';
+        flightPath.style.opacity = '0';
+      }, 3200);
+
+      // 🎉 Reveal destination text smoothly without layout jump
+      setTimeout(() => {
+        plane.style.display = 'none';
+        flightPath.style.display = 'none';
+        reveal.classList.add('show');
+      }, 4200);
+
+      // 🎊 Overlap background effects
+      setTimeout(() => {
+        startSnowfall();
+        startConfetti();
+        startAllSlideshows();
+      }, 3000);
+    };
+
+// 🎞️ Multiple independent slideshows
+function startSlideshow(containerId, interval = 4000) {
+  const container = document.getElementById(containerId);
+  const slides = container.querySelectorAll(".slide");
+  let index = 0;
+
+  setInterval(() => {
+    slides[index].classList.remove("active");
+    index = (index + 1) % slides.length;
+    slides[index].classList.add("active");
+  }, interval);
+}
+
+// Start all slideshows
+function startAllSlideshows() {
+  startSlideshow("cloudveil-slideshow", 4000);
+  startSlideshow("rustic-slideshow", 4000);
+}
+
+    // ❄️ Snowfall
+    function startSnowfall() {
+      const snowflakes = ["❅", "❆", "❄"];
+      for (let i = 0; i < 40; i++) {
+        const snow = document.createElement("div");
+        snow.className = "snowflake";
+        snow.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
+        snow.style.left = Math.random() * 100 + "vw";
+        snow.style.animationDuration = 5 + Math.random() * 5 + "s";
+        snow.style.fontSize = Math.random() * 10 + 10 + "px";
+        document.body.appendChild(snow);
+      }
+    }
+
+    // 🎊 Confetti
+    function startConfetti() {
+      for (let i = 0; i < 30; i++) {
+        const confetti = document.createElement("div");
+        confetti.className = "confetti";
+        confetti.style.left = Math.random() * 100 + "vw";
+        confetti.style.background = ["#ff5d73", "#ffdf5d", "#5dd1ff", "#7aff7a"][Math.floor(Math.random() * 4)];
+        confetti.style.animationDuration = 3 + Math.random() * 2 + "s";
+        confetti.style.width = confetti.style.height = Math.random() * 8 + 4 + "px";
+        document.body.appendChild(confetti);
+      }
+    }
+  </script>
+  <footer class="site-footer">
+  <div class="footer-content">
+    <p>✨ Operation Cowboy 30 ✨</p>
+    <p>Crafted with ❤️ for Agent Hunter’s 30th Adventure</p>
+    <p class="footer-links">
+      <a href="../index.html">🏠 Home</a> |
+      <a href="../html/map.html">🗺️ Map</a>
+    </p>
+    <p class="footer-copy">&copy; 2025 Operation Cowboy | All Rights Reserved</p>
+  </div>
+</footer>
+</body>
+</html>

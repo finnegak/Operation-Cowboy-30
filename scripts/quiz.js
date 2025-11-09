@@ -69,6 +69,7 @@ function restoreMapState() {
             plane.setAttribute("y", planeY);
             plane.setAttribute("transform", `rotate(220 ${planeX} ${planeY})`);
             insertMapEmojis(svg)
+            fadeInEmojis()
             break;
 
         case 1:
@@ -231,9 +232,10 @@ function handleStateClick(event) {
     } else if (questionNum === 5) {
         const correctAnswer = questions[Object.keys(questions)[questionNum]];
         if (stateId === correctAnswer) {
-            alert("Mission accomplished, agent! You've reached your final destination in Jackson Hole, Wyoming. Your mission is complete. Look");
+            alert("Mission accomplished, agent! You've reached your final destination in Jackson Hole, Wyoming. Your mission is complete.");
             questionNum++;
             sessionStorage.setItem('questionNum', questionNum);
+            window.location.href = "gameover.html";
         } else {
             window.location.href = "wrong.html";
         }
@@ -388,10 +390,10 @@ function showJacksonHoleHotspot() {
 
     jacksonHole.addEventListener("click", () => {
         if (questionNum === 5) {
-            alert("You’ve selected the final destination!");
+            alert("Mission accomplished, agent! You've reached your final destination in Jackson Hole, Wyoming. Your mission is complete.");
             questionNum++;
             sessionStorage.setItem('questionNum', questionNum);
-            getID('question').innerText = "Mission accomplished! You've reached your final destination.";
+            window.location.href = "gameover.html";
         }
     });
 
