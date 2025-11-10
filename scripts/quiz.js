@@ -15,7 +15,6 @@ function getID(id) { return document.getElementById(id); }
 main();
 
 function main() {
-    console.log("Quiz script loaded.");
     insertUS_SVG().then(() => {
         console.log("SVG and plane ready — restoring map state...");
         restoreMapState();
@@ -96,6 +95,8 @@ function restoreMapState() {
         case 5:
             questionFive();
             break;
+        case 6:
+            resetQuiz();
     }
 }
 
@@ -176,7 +177,7 @@ function handleStateClick(event) {
 
     if (questionNum === 0) {
         const correctAnswer = questions[Object.keys(questions)[questionNum]];
-        if (stateId === correctAnswer) {
+        if (stateId === correctAnswer || stateId === "alamo") {
             alert("That's right, partner — you'll touch down in Dallas, Texas for a quick pit stop before heading deeper into cowboy country.");
             nextQuestion(); // Increments questionNum, updates storage, and question text
             questionOne(); // Moves plane to TX
@@ -330,7 +331,8 @@ function insertMapEmojis(svg) {
         
         // Southwest
         { id: "grandCanyon", emoji: "🏜️", x: 325, y: 350, label: "Grand Canyon (Arizona)" },
-        { id: "alamo", emoji: "🤠", x: 550, y: 450, label: "The Alamo (San Antonio, TX)" },
+        { id: "alamo", emoji: "🤠", x: 550, y: 415, label: "Dallas, TX" },
+        { id: "utah", emoji: "🥤", x: 335, y: 250, label: "St. George, Utah" },
 
         // Mountain West
         { id: "rockies", emoji: "🏔️", x: 425, y: 275, label: "The Rockies (Colorado)" },
@@ -380,11 +382,11 @@ function showJacksonHoleHotspot() {
     // Create invisible Jackson Hole hotspot
     const jacksonHole = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     jacksonHole.setAttribute("id", "jacksonhole");
-    jacksonHole.setAttribute("cx", 375);
-    jacksonHole.setAttribute("cy", 175);
-    jacksonHole.setAttribute("r", 15);
+    jacksonHole.setAttribute("cx", 380);
+    jacksonHole.setAttribute("cy", 180);
+    jacksonHole.setAttribute("r", 20);
     jacksonHole.setAttribute("fill", "transparent");
-    // jacksonHole.setAttribute("stroke", "transparent");
+    jacksonHole.setAttribute("stroke", "transparent");
     jacksonHole.setAttribute("cursor", "pointer");
 
     jacksonHole.addEventListener("click", () => {
@@ -408,8 +410,6 @@ function removeJacksonHoleHotspot() {
         console.log("No Jackson Hole hotspot found to remove.");
     }
 }
-
-
 
 // Add tooltips to all states dynamically
 function addStateTooltips() {
@@ -465,8 +465,3 @@ function onlyWyoming(stateIds) {
         }
     });
 }
-
-
-
-
-
