@@ -190,11 +190,31 @@
 <div class="slideshow-section">
   <h2>Rustic Inn Creekside</h2>
   <div class="slideshow-container" id="rustic-slideshow">
-    <div class="slide active"><img src="../images/hotel/rustic.webp" alt="Rustic Inn Creekside Cabin"></div>
-    <div class="slide"><img src="../images/hotel/rustic2.jpeg" alt="Rustic Inn River View"></div>
-    <div class="slide"><img src="../images/hotel/rustic3.webp" alt="Rustic Inn Lobby"></div>
+    <div class="slide active"><img src="../images/hotel/rustic.jpg"></div>
+    <div class="slide"><img src="../images/hotel/rustic2.jpeg"></div>
+    <div class="slide"><img src="../images/hotel/rustic3.jpg"></div>
   </div>
   <div class="caption">475 N Cache St, Jackson, WY 83001</div>
+</div>
+
+<div class="slideshow-section">
+  <h2>Grand Teton National Park Guided Wildlife Tour</h2>
+  <div class="slideshow-container" id="wildlife-tour">
+    <div class="slide active"><img src="../images/hotel/tour1.jpg"></div>
+    <div class="slide"><img src="../images/hotel/tour2.jpg"></div>
+    <div class="slide"><img src="../images/hotel/tour3.jpg"></div>
+  </div>
+  <div class="caption">375 A Blair Dr, Jackson, WY 83001</div>
+</div>
+
+<div class="slideshow-section">
+  <h2>Million Dollar Cowboy Bar</h2>
+  <div class="slideshow-container" id="bar">
+    <div class="slide active"><img src="../images/hotel/million1.jpg"></div>
+    <div class="slide"><img src="../images/hotel/million2.jpg"></div>
+    <div class="slide"><img src="../images/hotel/million3.jpg"></div>
+  </div>
+  <div class="caption">25 N. Cache Street Jackson, Wyoming 83001</div>
 </div>
 
   <script>
@@ -253,6 +273,8 @@ function startSlideshow(containerId, interval = 4000) {
 function startAllSlideshows() {
   startSlideshow("cloudveil-slideshow", 4000);
   startSlideshow("rustic-slideshow", 4000);
+  startSlideshow("wildlife-tour", 4000);
+  startSlideshow("bar", 4000);
 }
 
     // ❄️ Snowfall
