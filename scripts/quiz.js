@@ -187,7 +187,7 @@ function handleStateClick(event) {
     } else if (questionNum === 1) {
         const correctAnswer = questions[Object.keys(questions)[questionNum]];
         
-        if (stateId === correctAnswer) {
+        if (stateId === correctAnswer || stateId === "soda") {
             alert("You've got sharp eyes, agent — that's Utah down below. Keep heading north toward wilder lands…");
             nextQuestion();
             questionTwo();
@@ -332,7 +332,7 @@ function insertMapEmojis(svg) {
         // Southwest
         { id: "grandCanyon", emoji: "🏜️", x: 325, y: 350, label: "Grand Canyon (Arizona)" },
         { id: "alamo", emoji: "🤠", x: 550, y: 415, label: "Dallas, TX" },
-        { id: "utah", emoji: "🥤", x: 335, y: 250, label: "St. George, Utah" },
+        { id: "soda", emoji: "🥤", x: 335, y: 250, label: "St. George, Utah" },
 
         // Mountain West
         { id: "rockies", emoji: "🏔️", x: 425, y: 275, label: "The Rockies (Colorado)" },
